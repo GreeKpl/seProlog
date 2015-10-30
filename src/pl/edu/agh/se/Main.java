@@ -1,37 +1,25 @@
 package pl.edu.agh.se;
 
-import gnu.prolog.term.AtomTerm;
-import gnu.prolog.term.CompoundTerm;
-import gnu.prolog.term.Term;
-import gnu.prolog.vm.Environment;
-import gnu.prolog.vm.Interpreter;
-import gnu.prolog.vm.PrologException;
+
+import jpl.Atom;
+import jpl.Query;
+import jpl.Term;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class Main extends JFrame {
 
+    private JTextArea topDescription;
+    private JButton yesButton;
+    private JButton noButton;
+
     public Main() {
         initializeGUI();
 
-        try {
-            Environment env = new Environment();
-            env.ensureLoaded(AtomTerm.get("cos.pl"));
-            Interpreter interpreter = env.createInterpreter();
-
-            env.runInitialization(interpreter);
-
-            Term[] list = new Term[]{AtomTerm.get("e"), AtomTerm.get("b"), AtomTerm.get("c")};
-            Term[] arguments = {AtomTerm.get("a"), CompoundTerm.getList(list)};
-            CompoundTerm goalTerm = new CompoundTerm(AtomTerm.get("elem"), arguments);
-
-            Interpreter.Goal goal = interpreter.prepareGoal(goalTerm);
-
-            System.out.println(interpreter.execute(goal));
-        } catch (PrologException e) {
-            e.printStackTrace();
-        }
+        jpl.Query q1 = new Query("consult",
+                new Term[]{new Atom("cos.pl")});
+        q1.oneSolution();
 
     }
 
@@ -43,15 +31,23 @@ public class Main extends JFrame {
     }
 
     private void initializeGUI() {
-        JButton quitButton = new JButton("Quit");
-
-        quitButton.addActionListener(event -> System.exit(0));
+        Container pane = getContentPane();
+        pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
 
         setTitle("Java Prolog");
         setSize(300, 200);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        add(quitButton);
+        topDescription = new JTextArea("Wybierz");
+        pane.add(topDescription);
+        yesButton = new JButton("TAK");
+        pane.add(yesButton);
+        noButton = new JButton("NIE");
+        pane.add(noButton);
+
+        JButton quitButton = new JButton("Koniec");
+        quitButton.addActionListener(event -> System.exit(0));
+        pane.add(quitButton);
     }
 }
