@@ -16,6 +16,10 @@ lek('lek przeciwzapalny').
 lek('oklad na noge').
 lek('oklad z lodu').
 lek('unieruchomienie').
+lek(stoperan).
+lek('duzo plynow').
+lek(apap).
+
 
 
 lek_na_chorobe(gripex, grypa).
@@ -26,6 +30,9 @@ lek_na_chorobe('lek przeciwzapalny', 'zwyrodnienie stawow').
 lek_na_chorobe('oklad na noge', 'zwichniecie stawu kolanowego').
 lek_na_chorobe('oklad z lodu', 'brak dloni').
 lek_na_chorobe('elastyczne unieruchomienie', 'skrecenie kostki').
+lek_na_chorobe(stoperan, zatrucie).
+lek_na_chorobe('duzo plynow', 'grypa zoladkowa').
+lek_na_chorobe(apap, migrena).
 
 
 choroba('skrecenie kostki') :-  \+jest_objaw('brak nogi'),
@@ -37,10 +44,31 @@ choroba('zwyrodnienie stawow') :- \+jest_objaw('brak nogi'),
 choroba('zwichniecie stawu kolanowego') :- \+jest_objaw('brak nogi'),
                                   jest_objaw('bol nogi').
 
-choroba('grypa') :- jest_objaw('wysoka temperatura').
+choroba('grypa') :- jest_objaw('wysoka temperatura'),
+					jest_objaw('bol glowy'),
+					jest_objaw('bol stawow'),
+					jest_objaw('suchy kaszel').
+
 choroba('malaria') :- jest_objaw('drgawki'),
                                   jest_objaw('wymioty'),
                                   jest_objaw('dreszcze').
+
+choroba('zatrucie') :- jest_objaw('wymioty'),
+						jest_objaw('podwyzszona temperatura'),
+						jest_objaw('biegunka'),
+						jest_objaw('bol brzucha'),
+						jest_objaw('bol glowy').
+
+choroba('grypa zoladkowa') :- jest_objaw('wymioty'),
+								jest_objaw('biegunka'),
+								jest_objaw('wymioty'),
+								jest_objaw('wyoka temperatura'),
+								jest_objaw('bol brzucha').
+
+choroba('migrena') :- jest_objaw('bol glowy'),
+						jest_objaw('nadwrazliwosc na swiatlo'),
+						jest_objaw('nudnosci').
+
 
 
 start :- propozycja(L), lek(L).
