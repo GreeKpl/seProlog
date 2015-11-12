@@ -28,29 +28,32 @@ lek_na_chorobe('oklad z lodu', 'brak dloni').
 lek_na_chorobe('elastyczne unieruchomienie', 'skrecenie kostki').
 
 
-start :- lek(R), propozycja(R).
-propozycja(X) :- \+lek_na_chorobe_ktorej_nie_mamy(X), \+lek_na_inna_chorobe(X), przedstaw_propozycje(X), wyczysc_wiedze.
-propozycja(_) :- powiedz_o_braku_propozycji, wyczysc_wiedze.
-lek_na_chorobe_ktorej_nie_mamy(X) :- nie_ma_choroby(Y), lek_na_chorobe(X, Y).
-lek_na_inna_chorobe(X) :- choroba(Y), \+lek_na_chorobe(X, Y).
+choroba('skrecenie kostki') :-  \+jest_objaw('brak nogi'),
+                                  jest_objaw('bol promieniujacy stopy').
 
+choroba('zwyrodnienie stawow') :- \+jest_objaw('brak nogi'),
+                                  jest_objaw('bol kolana'), jest_objaw('bol lokcia').
 
+choroba('zwichniecie stawu kolanowego') :- \+jest_objaw('brak nogi'),
+                                  jest_objaw('bol nogi').
 
-
-nie_ma_choroby('zwichniecie stawu kolanowego') :- jest_objaw('brak nogi').
-nie_ma_choroby('skrecenie kostki') :- jest_objaw('brak nogi').
-
-
-choroba('skrecenie kostki') :- jest_objaw('bol promieniujacy stopy').
-choroba('zwyrodnienie stawow') :- jest_objaw('bol kolana'), jest_objaw('bol lokcia').
-choroba('zwichniecie stawu kolanowego') :- jest_objaw('bol nogi').
 choroba('grypa') :- jest_objaw('wysoka temperatura').
-choroba('malaria') :- jest_objaw('drgawki'), jest_objaw('wymioty'), jest_objaw('dreszcze').
+choroba('malaria') :- jest_objaw('drgawki'),
+                                  jest_objaw('wymioty'),
+                                  jest_objaw('dreszcze').
+
+
+start :- propozycja(L), lek(L).
+
+propozycja(L) :- dobry_na_nasza_chorobe(L), przedstaw_propozycje(L), wyczysc_wiedze, !.
+propozycja(L) :- powiedz_o_braku_propozycji, wyczysc_wiedze. 
+
+dobry_na_nasza_chorobe(L) :- choroba(C), lek_na_chorobe(L, C).
 
 
 
 
-jest_objaw(X) :- prawda(X), \+falsz(X).
+jest_objaw(X) :- prawda(X).
 jest_objaw(X) :- nieokreslony(X), czy(X), read(Odp),
 	(Odp = 't' -> assertz(prawda(X));
 		assertz(falsz(X)), fail).
