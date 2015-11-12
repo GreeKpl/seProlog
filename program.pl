@@ -20,6 +20,8 @@ lek(stoperan).
 lek('duzo plynow').
 lek(apap).
 lek(acviscin).
+lek(chloramfenikol).
+lek('antybiotyk, nawadnianie').
 
 lek_na_chorobe(gripex, grypa).
 lek_na_chorobe(aspiryna, przeziebienie).
@@ -33,6 +35,9 @@ lek_na_chorobe(stoperan, zatrucie).
 lek_na_chorobe('duzo plynow', 'grypa zoladkowa').
 lek_na_chorobe(apap, migrena).
 lek_na_chorobe(acviscin, 'zapalenie pluc').
+lek_na_chorobe(chloramfenikol, dzuma).
+lek_na_chorobe('antybiotyk, nawadnianie', cholera)
+
 
 
 choroba('skrecenie kostki') :-  \+jest_objaw('brak nogi'),
@@ -61,7 +66,7 @@ choroba('zatrucie') :- jest_objaw('wymioty'),
 
 choroba('grypa zoladkowa') :- jest_objaw('wymioty'),
 								jest_objaw('biegunka'),
-								jest_objaw('wyoka temperatura'),
+								jest_objaw('wysoka temperatura'),
 								jest_objaw('bol brzucha').
 
 choroba('migrena') :- jest_objaw('bol glowy'),
@@ -72,6 +77,17 @@ choroba('zapalenie pluc') :- jest_objaw('bol w klatce piersiowej'),
 								jest_objaw('swiszczacy oddech'),
 								jest_objaw('dreszcze'),
 								jest_objaw('goraczka').
+
+choroba('dzuma') :- jest_objaw('wysoka temperatura'),
+						jest_objaw('dreszcze'),
+						jest_objaw('silne poty'),
+						jest_objaw('powiekszenie wezlow chlonnych').
+
+choroba('cholera') :- \+jest_objaw('bol brzucha'),
+						jest_objaw('biegunka'),
+						jest_objaw('wymioty'),
+						\+jest_objaw('wysoka temperatura'),
+						\+jest_objaw('podwyzszona temperatura').
 
 
 
