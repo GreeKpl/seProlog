@@ -19,8 +19,7 @@ lek('unieruchomienie').
 lek(stoperan).
 lek('duzo plynow').
 lek(apap).
-
-
+lek(acviscin).
 
 lek_na_chorobe(gripex, grypa).
 lek_na_chorobe(aspiryna, przeziebienie).
@@ -33,6 +32,7 @@ lek_na_chorobe('elastyczne unieruchomienie', 'skrecenie kostki').
 lek_na_chorobe(stoperan, zatrucie).
 lek_na_chorobe('duzo plynow', 'grypa zoladkowa').
 lek_na_chorobe(apap, migrena).
+lek_na_chorobe(acviscin, 'zapalenie pluc').
 
 
 choroba('skrecenie kostki') :-  \+jest_objaw('brak nogi'),
@@ -61,13 +61,18 @@ choroba('zatrucie') :- jest_objaw('wymioty'),
 
 choroba('grypa zoladkowa') :- jest_objaw('wymioty'),
 								jest_objaw('biegunka'),
-								jest_objaw('wymioty'),
 								jest_objaw('wyoka temperatura'),
 								jest_objaw('bol brzucha').
 
 choroba('migrena') :- jest_objaw('bol glowy'),
 						jest_objaw('nadwrazliwosc na swiatlo'),
 						jest_objaw('nudnosci').
+
+choroba('zapalenie pluc') :- jest_objaw('bol w klatce piersiowej'),
+								jest_objaw('swiszczacy oddech'),
+								jest_objaw('dreszcze'),
+								jest_objaw('goraczka').
+
 
 
 
@@ -91,7 +96,7 @@ nieokreslony(X) :- \+falsz(X), \+prawda(X).
 czy(X) :- write('czy odczuwasz: '), write(X), write('? (t/n)'), nl.
 
 
-przedstaw_propozycje(X) :- write('proponowany lek: '), write(X), nl.
+przedstaw_propozycje(X) :- write('przedstawione objawy pasuja do choroby, ktora mamy w bazie, '), write('proponowany lek: '), write(X), nl.
 powiedz_o_braku_propozycji :- write('nie umiem zaproponowac leku. Skontaktuj sie z lekarzem'), nl.
 
 wyczysc_wiedze :- retractall(prawda(_)), retractall(falsz(_)).
