@@ -36,7 +36,7 @@ lek_na_chorobe('duzo plynow', 'grypa zoladkowa').
 lek_na_chorobe(apap, migrena).
 lek_na_chorobe(acviscin, 'zapalenie pluc').
 lek_na_chorobe(chloramfenikol, dzuma).
-lek_na_chorobe('antybiotyk, nawadnianie', cholera)
+lek_na_chorobe('antybiotyk, nawadnianie', cholera).
 
 
 
