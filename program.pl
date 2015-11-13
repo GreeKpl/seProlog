@@ -3,8 +3,6 @@
     falsz/1,
     nie_ma_choroby/1,
     choroba/1,
-    lek_na_chorobe_ktorej_nie_mamy/1,
-    lek_na_inna_chorobe/1,
     lek/1.
 
 
@@ -94,10 +92,10 @@ choroba('cholera') :- \+jest_objaw('bol brzucha'),
 
 start :- propozycja(L), lek(L).
 
-propozycja(L) :- dobry_na_nasza_chorobe(L), przedstaw_propozycje(L), wyczysc_wiedze, !.
+propozycja(L) :- dobry_na_nasza_chorobe(L, C), przedstaw_propozycje(L, C), wyczysc_wiedze, !.
 propozycja(L) :- powiedz_o_braku_propozycji, wyczysc_wiedze. 
 
-dobry_na_nasza_chorobe(L) :- choroba(C), lek_na_chorobe(L, C).
+dobry_na_nasza_chorobe(L, C) :- choroba(C), lek_na_chorobe(L, C).
 
 
 
@@ -112,7 +110,7 @@ nieokreslony(X) :- \+falsz(X), \+prawda(X).
 czy(X) :- write('czy odczuwasz: '), write(X), write('? (t/n)'), nl.
 
 
-przedstaw_propozycje(X) :- write('przedstawione objawy pasuja do choroby, ktora mamy w bazie, '), write('proponowany lek: '), write(X), nl.
+przedstaw_propozycje(X, C) :- write('przedstawione objawy pasuja do choroby: '), write(C), write(' proponowany lek: '), write(X), nl.
 powiedz_o_braku_propozycji :- write('nie umiem zaproponowac leku. Skontaktuj sie z lekarzem'), nl.
 
 wyczysc_wiedze :- retractall(prawda(_)), retractall(falsz(_)).
