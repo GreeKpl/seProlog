@@ -114,7 +114,9 @@ temperatura :- write('podaj wartosc temparatury: ').
 poznaj_temperature :- write('jaka masz temperature?'), nl, read(Odp),
                   zapamietaj_temperature(Odp).
 zapamietaj_temperature(Temperatura) :- float(Temperatura), assertz(temperatura(Temperatura)).
-zapamietaj_temperature(Temperatura) :- write("Blad! "), write(Temperatura), write(" nie jest poprawna temperatura. "), halt().
+zapamietaj_temperature(Temperatura) :- write("Blad! "), write(Temperatura), write(" nie jest poprawna temperatura. Sproboj jeszcze raz. "), poznaj_temperature.
+
+
 
 przedstaw_propozycje(X, C) :- write('przedstawione objawy pasuja do choroby: '), write(C), write(' proponowany lek: '), write(X), nl.
 powiedz_o_braku_propozycji :- write('nie umiem zaproponowac leku. Skontaktuj sie z lekarzem'), nl.
