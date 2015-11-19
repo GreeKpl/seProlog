@@ -85,8 +85,7 @@ choroba('dzuma') :- objaw_temperaturowy('wysoka temperatura'),
 choroba('cholera') :- \+jest_objaw('bol brzucha'),
 						jest_objaw('biegunka'),
 						jest_objaw('wymioty'),
-						\+objaw_temperaturowy('wysoka temperatura'),
-						\+objaw_temperaturowy('podwyzszona temperatura').
+						objaw_temperaturowy('brak temperatury').
 
 
 
@@ -110,7 +109,7 @@ jest_objaw(X) :- nieokreslony(X), czy(X), read(Odp),
 nieokreslony(X) :- \+falsz(X), \+prawda(X).
 
 czy(X) :- write('czy odczuwasz: '), write(X), write('? (t/n)'), nl.
-temperatura :- write('podaj wartosc temparatury: ').
+temperatura :- write('podaj wartosc temperatury: ').
 
 poznaj_temperature :- write('jaka masz temperature?'), nl, read(Odp),
                   zapamietaj_temperature(Odp).
