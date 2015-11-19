@@ -1,6 +1,7 @@
 :- dynamic
     prawda/1,
     falsz/1,
+    temperatura/1,
     nie_ma_choroby/1,
     choroba/1,
     lek/1.
@@ -47,7 +48,7 @@ choroba('zwyrodnienie stawow') :- \+jest_objaw('brak nogi'),
 choroba('zwichniecie stawu kolanowego') :- \+jest_objaw('brak nogi'),
                                   jest_objaw('bol nogi').
 
-choroba('grypa') :- jest_objaw('wysoka temperatura'),
+choroba('grypa') :- objaw_temperaturowy('wysoka temperatura'),
 					jest_objaw('bol glowy'),
 					jest_objaw('bol stawow'),
 					jest_objaw('suchy kaszel').
@@ -57,14 +58,14 @@ choroba('malaria') :- jest_objaw('drgawki'),
                                   jest_objaw('dreszcze').
 
 choroba('zatrucie') :- jest_objaw('wymioty'),
-						jest_objaw('podwyzszona temperatura'),
+						objaw_temperaturowy('podwyzszona temperatura'),
 						jest_objaw('biegunka'),
 						jest_objaw('bol brzucha'),
 						jest_objaw('bol glowy').
 
 choroba('grypa zoladkowa') :- jest_objaw('wymioty'),
 								jest_objaw('biegunka'),
-								jest_objaw('wysoka temperatura'),
+								objaw_temperaturowy('wysoka temperatura'),
 								jest_objaw('bol brzucha').
 
 choroba('migrena') :- jest_objaw('bol glowy'),
@@ -76,7 +77,7 @@ choroba('zapalenie pluc') :- jest_objaw('bol w klatce piersiowej'),
 								jest_objaw('dreszcze'),
 								jest_objaw('goraczka').
 
-choroba('dzuma') :- jest_objaw('wysoka temperatura'),
+choroba('dzuma') :- objaw_temperaturowy('wysoka temperatura'),
 						jest_objaw('dreszcze'),
 						jest_objaw('silne poty'),
 						jest_objaw('powiekszenie wezlow chlonnych').
@@ -84,21 +85,21 @@ choroba('dzuma') :- jest_objaw('wysoka temperatura'),
 choroba('cholera') :- \+jest_objaw('bol brzucha'),
 						jest_objaw('biegunka'),
 						jest_objaw('wymioty'),
-						\+jest_objaw('wysoka temperatura'),
-						\+jest_objaw('podwyzszona temperatura').
+						\+objaw_temperaturowy('wysoka temperatura'),
+						\+objaw_temperaturowy('podwyzszona temperatura').
 
 
 
 
-start :- propozycja(L), lek(L).
+start :- poznaj_temperature, propozycja(L), lek(L).
 
 propozycja(L) :- dobry_na_nasza_chorobe(L, C), przedstaw_propozycje(L, C), wyczysc_wiedze, !.
 propozycja(L) :- powiedz_o_braku_propozycji, wyczysc_wiedze. 
 
 dobry_na_nasza_chorobe(L, C) :- choroba(C), lek_na_chorobe(L, C).
 
-
-
+objaw_temperaturowy('wysoka temperatura') :- temperatura(T), T >= 39.
+objaw_temperaturowy('podwyzszona temperatura') :- temperatura(T), T >= 37.
 
 jest_objaw(X) :- prawda(X).
 jest_objaw(X) :- nieokreslony(X), czy(X), read(Odp),
@@ -109,6 +110,10 @@ nieokreslony(X) :- \+falsz(X), \+prawda(X).
 
 czy(X) :- write('czy odczuwasz: '), write(X), write('? (t/n)'), nl.
 
+poznaj_temperature :- write('jaka masz temperature?'), nl, read(Odp),
+                  zapamietaj_temperature(Odp).
+zapamietaj_temperature(Temperatura) :- float(Temperatura), assertz(temperatura(Temperatura)).
+zapamietaj_temperature(Temperatura) :- write("Blad! "), write(Temperatura), write(" nie jest poprawna temperatura. "), halt().
 
 przedstaw_propozycje(X, C) :- write('przedstawione objawy pasuja do choroby: '), write(C), write(' proponowany lek: '), write(X), nl.
 powiedz_o_braku_propozycji :- write('nie umiem zaproponowac leku. Skontaktuj sie z lekarzem'), nl.
