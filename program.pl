@@ -108,6 +108,7 @@ jest_objaw(X) :- nieokreslony(X), czy(X), read(Odp),
 nieokreslony(X) :- \+falsz(X), \+prawda(X).
 
 czy(X) :- write('czy odczuwasz: '), write(X), write('? (t/n)'), nl.
+temperatura :- write('podaj wartosc temparatury: ').
 
 
 przedstaw_propozycje(X, C) :- write('przedstawione objawy pasuja do choroby: '), write(C), write(' proponowany lek: '), write(X), nl.
