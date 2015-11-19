@@ -98,8 +98,9 @@ propozycja(L) :- powiedz_o_braku_propozycji, wyczysc_wiedze.
 
 dobry_na_nasza_chorobe(L, C) :- choroba(C), lek_na_chorobe(L, C).
 
-objaw_temperaturowy('wysoka temperatura') :- temperatura(T), T >= 39.
-objaw_temperaturowy('podwyzszona temperatura') :- temperatura(T), T >= 37.
+objaw_temperaturowy('wysoka temperatura') :- temperatura(T), T >=  39.5.
+objaw_temperaturowy('podwyzszona temperatura') :- temperatura(T), T >= 37.5, T < 39.5.
+objaw_temperaturowy('brak temperatury') :- temperatura(T), T >= 36.0, T < 37.5.
 
 jest_objaw(X) :- prawda(X).
 jest_objaw(X) :- nieokreslony(X), czy(X), read(Odp),
@@ -114,8 +115,7 @@ temperatura :- write('podaj wartosc temparatury: ').
 poznaj_temperature :- write('jaka masz temperature?'), nl, read(Odp),
                   zapamietaj_temperature(Odp).
 zapamietaj_temperature(Temperatura) :- float(Temperatura), assertz(temperatura(Temperatura)).
-zapamietaj_temperature(Temperatura) :- write("Blad! "), write(Temperatura), write(" nie jest poprawna temperatura. Sproboj jeszcze raz. "), poznaj_temperature.
-
+zapamietaj_temperature(Temperatura) :- write("Blad! "), write(Temperatura), write(" nie jest poprawna temperatura. Sproboj jeszcze raz. Poprawna postac to X.Y., np. 37.0. lub 36.6."), poznaj_temperature.
 
 
 przedstaw_propozycje(X, C) :- write('przedstawione objawy pasuja do choroby: '), write(C), write(' proponowany lek: '), write(X), nl.
