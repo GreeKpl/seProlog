@@ -93,10 +93,9 @@ my_write(X) :- write(X).
 my_read(X) :- read(X).
 
 
-/*
-jpl_call('agh.se.Main', printSomething, ['abc'], _)
-my_write(X) :- getInstance
-*/
+%my_write(X) :- jpl_call('agh.se.Main', printQuestion, [X], _).
+%my_read(X) :- jpl_call('agh.se.Main', waitForAnswer, [], _), jpl_call('agh.se.Main', getAnswer, [], X).
+%*/
 
 start :- poznaj_temperature, propozycja(L), lek(L).
 
@@ -122,7 +121,8 @@ poznaj_temperature :- my_write('jaka masz temperature?'), nl, my_read(Odp),
                   zapamietaj_temperature(Odp).
 
 zapamietaj_temperature(Temperatura) :- float(Temperatura), assertz(temperatura(Temperatura)), !.
-zapamietaj_temperature(Temperatura) :- my_write("Blad! "), my_write(Temperatura), my_write(" nie jest poprawna temperatura. Sprobuj jeszcze raz. Poprawna postac to X.Y., np. 37.0. lub 36.6."), poznaj_temperature.
+zapamietaj_temperature(Temperatura) :- my_write("Blad! "), my_write(Temperatura),
+									my_write(" nie jest poprawna temperatura. Sprobuj jeszcze raz. Poprawna postac to X.Y., np. 37.0. lub 36.6."), poznaj_temperature.
 
 
 przedstaw_propozycje(X, C) :- my_write('przedstawione objawy pasuja do choroby: '), my_write(C), my_write(' proponowany lek: '), my_write(X), nl.
