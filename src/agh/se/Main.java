@@ -1,6 +1,7 @@
 package agh.se;
 
 import jpl.Atom;
+import jpl.Compound;
 import jpl.Query;
 import jpl.Term;
 
@@ -12,63 +13,44 @@ import java.awt.event.ActionListener;
 public class Main extends JFrame {
 
     private static Main instance;
-    private JButton tempButton;
-    private JTextArea topDescription;
+
+    private final JTextField temperatureField;
+    private final Container mainPane;
+    private JPanel row;
+
+    private JLabel topDescription;
     private JButton yesButton;
     private JButton noButton;
-    private String answer = "n";
+
+    private static final String YES = "t";
+    private static final String NO = "n";
+
+    private String answer = YES;
 
     private Main() {
-        Container pane = getContentPane();
-        pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
+        mainPane = getContentPane();
+        mainPane.setLayout(new BoxLayout(mainPane, BoxLayout.Y_AXIS));
 
-        setTitle("Java Prolog");
-        setSize(300, 200);
+        setTitle("Program sugerujący lek");
+        setSize(400, 250);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        topDescription = new JTextArea("Wybierz\n");
-        pane.add(topDescription);
-        yesButton = new JButton("TAK");
-        pane.add(yesButton);
-        noButton = new JButton("NIE");
-        pane.add(noButton);
-        tempButton = new JButton("37.9");
-        pane.add(tempButton);
-
-        JButton quitButton = new JButton("Koniec");
-        quitButton.addActionListener(new ActionListener() {
+        // temperature row
+        row = new JPanel();
+        row.add(new JLabel("Temperatura: "));
+        temperatureField = new JTextField();
+        temperatureField.setColumns(6);
+        row.add(temperatureField);
+        mainPane.add(row);
+        JButton button = new JButton("OK");
+        button.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent event) {
-                System.exit(0);
+            public void actionPerformed(ActionEvent e) {
+                onSelectedTemperature();
             }
         });
-
-        yesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                answer = "t.";
-                Main.getInstance().wakeUp();
-            }
-        });
-
-        noButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                answer = "n.";
-                Main.getInstance().wakeUp();
-            }
-        });
-
-        tempButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent event) {
-                answer = "37.9.";
-                Main.getInstance().wakeUp();
-            }
-        });
-
-        pane.add(quitButton);
+        mainPane.add(button);
     }
 
     public static Main getInstance() {
@@ -85,38 +67,108 @@ public class Main extends JFrame {
                 Main main = Main.getInstance();
                 main.setVisible(true);
 
-                Thread thread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Query q1 = new Query("consult", new Term[]{new Atom("program.pl")});
-                        q1.hasSolution();
-
-//		Query query = new Query(new Compound("elem", new Term[] {
-//				new Atom("a"),
-//				Util.termArrayToList(new Term[] { atom("a"), atom("b"),
-//						atom("c") }) }));
-
-                        Query query = new Query("start");
-                        query.hasSolution();
-
-//                        query = new Query("assertz", new Term[]{new Atom("temperatura", "39.1")});
-
-//        System.out.println("ELEMENT " + query.hasSolution());
-
-
-                    }
-                });
-                thread.start();
+                main.start();
             }
         });
     }
 
     public static void printQuestion(String value) {
-        getInstance().topDescription.append(value + "\n");
+        getInstance().topDescription.setText("Czy odczuwasz: " + value + "?");
+    }
+
+    public static void printSolution(String illness, String medicine) {
+        getInstance().clearButtons();
+        getInstance().topDescription.setText("<html>Stwierdzona choroba: " + illness + "<br>Proponowany lek: " + medicine + "</html>");
+
+    }
+
+    public static void informAboutNoSolution() {
+        getInstance().clearButtons();
+        getInstance().topDescription.setText("<html>Niestety nie udało się znaleźć rozwiązania.<br>Skontaktuj się z lekarzem</html>");
+
     }
 
     public static String getAnswer() {
+        getInstance().topDescription.setText("");
+
         return getInstance().answer;
+    }
+
+    public static void waitForAnswer() throws InterruptedException {
+        Main.getInstance().waitForIt();
+    }
+
+    private void clearButtons() {
+        mainPane.remove(row);
+    }
+
+    public void onSelectedTemperature() {
+        try {
+            double temp = Double.parseDouble(temperatureField.getText());
+            Query q = new Query("assertz", new Compound("temperatura", new Term[]{new jpl.Float(temp)}));
+            q.hasSolution();
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Query q = new Query("start");
+                    q.hasSolution();
+                }
+            }).start();
+
+            showSecondPage();
+
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "Niepoprawna temperatura");
+        }
+    }
+
+    private void showSecondPage() {
+        mainPane.removeAll();
+
+        topDescription = new JLabel();
+        row = new JPanel();
+        mainPane.add(topDescription);
+        yesButton = new JButton("TAK");
+        row.add(yesButton);
+        noButton = new JButton("NIE");
+        row.add(noButton);
+        mainPane.add(row);
+
+        JButton quitButton = new JButton("Koniec");
+        quitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                System.exit(0);
+            }
+        });
+
+        yesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                answer = YES;
+                Main.getInstance().wakeUp();
+            }
+        });
+
+        noButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                answer = NO;
+                Main.getInstance().wakeUp();
+            }
+        });
+
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.add(quitButton);
+
+        mainPane.add(bottomPanel);
+        mainPane.repaint();
+    }
+
+    private void start() {
+        Query q1 = new Query("consult", new Term[]{new Atom("program.pl")});
+        q1.hasSolution();
     }
 
     public synchronized void wakeUp() {
@@ -125,10 +177,6 @@ public class Main extends JFrame {
 
     public synchronized void waitForIt() throws InterruptedException {
         wait();
-    }
-
-    public static void waitForAnswer() throws InterruptedException {
-        Main.getInstance().waitForIt();
     }
 
 }

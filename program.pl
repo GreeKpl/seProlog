@@ -88,19 +88,17 @@ choroba('cholera') :- \+jest_objaw('bol brzucha'),
 						objaw_temperaturowy('brak temperatury').
 
 
+wyswietl_pytanie(X) :- jpl_call('agh.se.Main', printQuestion, [X], _).
+wyswietl_propozycje(L, C) :- jpl_call('agh.se.Main', printSolution, [C, L], _).
+wyswietl_brak_propozycji :- jpl_call('agh.se.Main', informAboutNoSolution, [], _).
 
-my_write(X) :- write(X).
-my_read(X) :- read(X).
+odbierz_odpowiedz(X) :- jpl_call('agh.se.Main', waitForAnswer, [], _), jpl_call('agh.se.Main', getAnswer, [], X).
 
 
-%my_write(X) :- jpl_call('agh.se.Main', printQuestion, [X], _).
-%my_read(X) :- jpl_call('agh.se.Main', waitForAnswer, [], _), jpl_call('agh.se.Main', getAnswer, [], X).
-%*/
+start :- propozycja(L), lek(L).
 
-start :- poznaj_temperature, propozycja(L), lek(L).
-
-propozycja(L) :- dobry_na_nasza_chorobe(L, C), przedstaw_propozycje(L, C), wyczysc_wiedze, !.
-propozycja(_) :- powiedz_o_braku_propozycji, wyczysc_wiedze.
+propozycja(L) :- dobry_na_nasza_chorobe(L, C), wyswietl_propozycje(L, C), wyczysc_wiedze, !.
+propozycja(_) :- wyswietl_brak_propozycji, wyczysc_wiedze.
 
 dobry_na_nasza_chorobe(L, C) :- choroba(C), lek_na_chorobe(L, C).
 
@@ -109,24 +107,12 @@ objaw_temperaturowy('podwyzszona temperatura') :- temperatura(T), T >= 37.5, T <
 objaw_temperaturowy('brak temperatury') :- temperatura(T), T >= 36.0, T < 37.5.
 
 jest_objaw(X) :- prawda(X).
-jest_objaw(X) :- nieokreslony(X), czy(X), my_read(Odp),
+jest_objaw(X) :- nieokreslony(X), czy(X), odbierz_odpowiedz(Odp), write(Odp),
 	(Odp = 't' -> assertz(prawda(X));
 		assertz(falsz(X)), fail).
 
 nieokreslony(X) :- \+falsz(X), \+prawda(X).
 
-czy(X) :- my_write('czy odczuwasz: '), my_write(X), my_write('? (t/n)'), nl.
-
-poznaj_temperature :- my_write('jaka masz temperature?'), nl, my_read(Odp),
-                  zapamietaj_temperature(Odp).
-
-zapamietaj_temperature(Temperatura) :- float(Temperatura), assertz(temperatura(Temperatura)), !.
-zapamietaj_temperature(Temperatura) :- my_write("Blad! "), my_write(Temperatura),
-									my_write(" nie jest poprawna temperatura. Sprobuj jeszcze raz. Poprawna postac to X.Y., np. 37.0. lub 36.6."), poznaj_temperature.
-
-
-przedstaw_propozycje(X, C) :- my_write('przedstawione objawy pasuja do choroby: '), my_write(C), my_write(' proponowany lek: '), my_write(X), nl.
-powiedz_o_braku_propozycji :- my_write('nie umiem zaproponowac leku. Skontaktuj sie z lekarzem'), nl.
+czy(X) :- wyswietl_pytanie(X).
 
 wyczysc_wiedze :- retractall(prawda(_)), retractall(falsz(_)).
-
