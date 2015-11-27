@@ -12,7 +12,9 @@ import java.awt.event.ActionListener;
 
 public class Main extends JFrame {
 
-    private static Main instance;
+	private static final long serialVersionUID = 1L;
+
+	private static Main instance;
 
     private final JTextField temperatureField;
     private final Container mainPane;

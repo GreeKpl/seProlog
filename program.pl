@@ -6,6 +6,9 @@
     choroba/1,
     lek/1.
 
+/* 
+19 leków, 19 chorób, 38 symptomów, 65 reguł
+*/
 
 lek(gripex).
 lek(aspiryna).
@@ -21,6 +24,11 @@ lek(apap).
 lek(acviscin).
 lek(chloramfenikol).
 lek('antybiotyk, nawadnianie').
+lek('lek przeciwhistaminowy, izoacja').
+lek('wypoczynek, izolacja').
+lek('lek przeciwgoraczkowy, izolacja').
+lek('sok malinowy, wypoczynek').
+lek('pobyt w szpitalu, penicylina').
 
 lek_na_chorobe(gripex, grypa).
 lek_na_chorobe(aspiryna, przeziebienie).
@@ -36,14 +44,19 @@ lek_na_chorobe(apap, migrena).
 lek_na_chorobe(acviscin, 'zapalenie pluc').
 lek_na_chorobe(chloramfenikol, dzuma).
 lek_na_chorobe('antybiotyk, nawadnianie', cholera).
-
+lek_na_chorobe('lek przeciwhistaminowy, izolacja', 'ospa wietrzna').
+lek_na_chorobe('wypoczynek, izolacja', 'świnka').
+lek_na_chorobe('lek przeciwgoraczkowy, izolacja', 'różyczka').
+lek_na_chorobe('sok malinowy, wypoczynek', 'zapalenie oskrzeli').
+lek_na_chorobe('pobyt w szpitalu, penicylina', 'tężec').
 
 
 choroba('skrecenie kostki') :-  \+jest_objaw('brak nogi'),
                                   jest_objaw('bol promieniujacy stopy').
 
 choroba('zwyrodnienie stawow') :- \+jest_objaw('brak nogi'),
-                                  jest_objaw('bol kolana'), jest_objaw('bol lokcia').
+                                  jest_objaw('bol kolana'),
+                                  jest_objaw('bol lokcia').
 
 choroba('zwichniecie stawu kolanowego') :- \+jest_objaw('brak nogi'),
                                   jest_objaw('bol nogi').
@@ -86,6 +99,40 @@ choroba('cholera') :- \+jest_objaw('bol brzucha'),
 						jest_objaw('biegunka'),
 						jest_objaw('wymioty'),
 						objaw_temperaturowy('brak temperatury').
+						
+choroba('ospa wietrzna') :- jest_objaw('wysypka'),
+							objaw_temperaturowy('wysoka temperatura'),
+							jest_objaw('kontakt z zarażonym ospą'),
+							jest_objaw('swedzenie'),
+							jest_objaw('katar').
+							
+choroba('świnka') :- jest_objaw('obrzęk slinianek przyusznych'),
+					jest_objaw('bol slinianek przyusznych'),
+					jest_objaw('kontakt z zarażonym świnką'),
+					jest_objaw('brak apetytu'),
+					jest_objaw('bol glowy'),
+					objaw_temperaturowy('podwyzszona temperatura').
+					
+choroba('rożyczka') :- jest_objaw('wysypka'),
+						\+jest_objaw('swedzenie'),
+						objaw_temperaturowy('podwyzszona temperatura'),
+						jest_objaw('powiekszone wezly chlonne').
+						
+choroba('zapalenie oskrzeli') :- objaw_temperaturowy('podwyzszona temperatura'),
+								jest_objaw('suchy kaszel'),
+								jest_objaw('mokry kaszel'),
+								jest_objaw('bol glowy'),
+								jest_objaw('zle samopoczucie').
+								
+choroba('tężec') :- jest_objaw('zabrudzone skaleczenie'),
+					jest_objaw('przymusowy usmiech'),
+					jest_objaw('bol glowy'),
+					jest_objaw('dretwienie i mrowienie w okolicach skaleczenia'),
+					jest_objaw('uczucie napiecia miesni'),
+					objaw_temperaturowy('brak temperatury'),
+					jest_objaw('drgawki').
+										
+							
 
 
 wyswietl_pytanie(X) :- jpl_call('agh.se.Main', printQuestion, [X], _).
