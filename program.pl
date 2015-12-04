@@ -51,14 +51,14 @@ lek_na_chorobe('sok malinowy, wypoczynek', 'zapalenie oskrzeli').
 lek_na_chorobe('pobyt w szpitalu, penicylina', 'tężec').
 
 
-choroba('skrecenie kostki') :-  \+jest_objaw('brak nogi'),
+choroba('skrecenie kostki') :-  jest_objaw('uraz mechaniczny'),
                                   jest_objaw('bol promieniujacy stopy').
 
-choroba('zwyrodnienie stawow') :- \+jest_objaw('brak nogi'),
+choroba('zwyrodnienie stawow') :- jest_objaw('uraz mechaniczny'),
                                   jest_objaw('bol kolana'),
                                   jest_objaw('bol lokcia').
 
-choroba('zwichniecie stawu kolanowego') :- \+jest_objaw('brak nogi'),
+choroba('zwichniecie stawu kolanowego') :- jest_objaw('uraz mechaniczny'),
                                   jest_objaw('bol nogi').
 
 choroba('grypa') :- objaw_temperaturowy('wysoka temperatura'),
